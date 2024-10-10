@@ -1,0 +1,429 @@
+<html><head><base href="https://teologo-nik92.com/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teólogo NIK92</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    height: 100%;
+    overflow-x: hidden;
+  }
+  
+  #particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: rgba(30, 30, 30, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #bb86fc;
+    margin-bottom: 2rem;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  
+  .select-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  select {
+    width: 30%;
+    padding: 0.5rem;
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #4CAF50;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  #result {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: rgba(40, 40, 40, 0.8);
+    border-radius: 5px;
+  }
+  
+  .verse {
+    font-weight: bold;
+    color: #cf6679;
+  }
+  
+  .verse-text {
+    font-style: italic;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: rgba(60, 60, 60, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #bb86fc;
+  }
+  
+  .analysis {
+    margin-top: 1rem;
+  }
+  
+  .references {
+    margin-top: 1rem;
+    font-style: italic;
+  }
+  
+  .loading {
+    text-align: center;
+    font-style: italic;
+    color: #bb86fc;
+  }
+  
+  .explanation {
+    background-color: rgba(60, 60, 60, 0.8);
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin-top: 0.5rem;
+  }
+  
+  .web-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(70, 70, 70, 0.8);
+    border-radius: 5px;
+  }
+  
+  h3 {
+    color: #03DAC6;
+    font-size: 1.3em;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #03DAC6;
+    padding-bottom: 5px;
+  }
+  
+  .reference-link {
+    cursor: pointer;
+    color: #bb86fc;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+  }
+  
+  .reference-link:hover {
+    color: #03DAC6;
+  }
+  
+  .error {
+    color: #ff6b6b;
+    font-weight: bold;
+    padding: 10px;
+    background-color: rgba(255, 107, 107, 0.1);
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+
+  .web-info p {
+    margin-bottom: 0.5rem;
+  }
+
+  .web-info p:last-child {
+    margin-bottom: 0;
+  }
+
+  .explanations {
+    margin-top: 1rem;
+  }
+
+  .explanation {
+    background-color: rgba(60, 60, 60, 0.8);
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .explanation:last-child {
+    margin-bottom: 0;
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+</head>
+<body>
+<div id="particles-js"></div>
+<div class="container">
+  <h1>Teólogo NIK92</h1>
+  <div class="select-wrapper">
+    <select id="book">
+      <option value="">Seleccione un libro</option>
+    </select>
+    <select id="chapter">
+      <option value="">Capítulo</option>
+    </select>
+    <select id="verse">
+      <option value="">Versículo</option>
+    </select>
+  </div>
+  <button id="analyze">Comprender</button>
+  <div id="result"></div>
+</div>
+
+<script>
+const books = [
+  "Génesis", "Éxodo", "Levítico", "Números", "Deuteronomio", "Josué", "Jueces", "Rut", "1 Samuel", "2 Samuel",
+  "1 Reyes", "2 Reyes", "1 Crónicas", "2 Crónicas", "Esdras", "Nehemías", "Ester", "Job", "Salmos", "Proverbios",
+  "Eclesiastés", "Cantares", "Isaías", "Jeremías", "Lamentaciones", "Ezequiel", "Daniel", "Oseas", "Joel", "Amós",
+  "Abdías", "Jonás", "Miqueas", "Nahúm", "Habacuc", "Sofonías", "Hageo", "Zacarías", "Malaquías",
+  "Mateo", "Marcos", "Lucas", "Juan", "Hechos", "Romanos", "1 Corintios", "2 Corintios", "Gálatas", "Efesios",
+  "Filipenses", "Colosenses", "1 Tesalonicenses", "2 Tesalonicenses", "1 Timoteo", "2 Timoteo", "Tito", "Filemón",
+  "Hebreos", "Santiago", "1 Pedro", "2 Pedro", "1 Juan", "2 Juan", "3 Juan", "Judas", "Apocalipsis"
+];
+
+const bookSelect = document.getElementById('book');
+const chapterSelect = document.getElementById('chapter');
+const verseSelect = document.getElementById('verse');
+const analyzeButton = document.getElementById('analyze');
+const resultDiv = document.getElementById('result');
+
+// Populate book select
+books.forEach(book => {
+  const option = document.createElement('option');
+  option.value = book;
+  option.textContent = book;
+  bookSelect.appendChild(option);
+});
+
+bookSelect.addEventListener('change', () => {
+  chapterSelect.innerHTML = '<option value="">Capítulo</option>';
+  verseSelect.innerHTML = '<option value="">Versículo</option>';
+  
+  const chapters = getChapters(bookSelect.value);
+  chapters.forEach(chapter => {
+    const option = document.createElement('option');
+    option.value = chapter;
+    option.textContent = chapter;
+    chapterSelect.appendChild(option);
+  });
+});
+
+chapterSelect.addEventListener('change', () => {
+  verseSelect.innerHTML = '<option value="">Versículo</option>';
+  
+  const verses = getVerses(bookSelect.value, chapterSelect.value);
+  verses.forEach(verse => {
+    const option = document.createElement('option');
+    option.value = verse;
+    option.textContent = verse;
+    verseSelect.appendChild(option);
+  });
+});
+
+analyzeButton.addEventListener('click', () => analyzeVerse());
+
+async function analyzeVerse(reference = null) {
+  let book, chapter, verse;
+  
+  try {
+    if (reference) {
+      [book, chapter, verse] = parseReference(reference);
+    } else {
+      book = bookSelect.value;
+      chapter = chapterSelect.value;
+      verse = verseSelect.value;
+    }
+    
+    if (!book || !chapter || !verse) {
+      throw new Error('Por favor, seleccione un libro, capítulo y versículo.');
+    }
+    
+    resultDiv.innerHTML = '<p class="loading">Dame un momento, lo estoy consultando con Dios...</p>';
+    
+    const verseText = await getVerseText(book, chapter, verse);
+    displayResult(book, chapter, verse, verseText);
+    const analysis = await getAnalysis(book, chapter, verse, verseText);
+    displayAnalysis(analysis);
+  } catch (error) {
+    resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+    console.error('Error en analyzeVerse:', error);
+  }
+}
+
+async function getVerseText(book, chapter, verse) {
+  try {
+    const response = await fetch(`/api/bible/reina-valera-1960/${book}/${chapter}/${verse}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.text();
+  } catch (error) {
+    console.error('Error fetching verse text:', error);
+    throw new Error('No se pudo obtener el texto del versículo. Por favor, verifica tu conexión a internet.');
+  }
+}
+
+async function getAnalysis(book, chapter, verse, verseText) {
+  try {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    const response = await fetch('/api/intelligence/ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        book,
+        chapter,
+        verse,
+        verseText,
+        query: `Proporciona un análisis detallado y extenso del versículo ${book} ${chapter}:${verse}. Incluye contexto histórico, interpretación teológica, aplicación práctica y cualquier otra información relevante. No escatimes en detalles y explaya la respuesta lo que sea necesario para una comprensión profunda.`
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const aiResponse = await response.json();
+    
+    return {
+      analysis: aiResponse.analysis || 'No se pudo obtener el análisis.',
+      references: aiResponse.references || [],
+      explanations: aiResponse.explanations || [],
+      webInfo: aiResponse.webInfo || 'No hay información adicional disponible.'
+    };
+  } catch (error) {
+    console.error('Error fetching analysis:', error);
+    throw new Error('No se pudo obtener el análisis. Por favor, verifica tu conexión a internet.');
+  }
+}
+
+function parseReference(reference) {
+  const parts = reference.split(' ');
+  let book, chapter, verse;
+  
+  if (parts.length >= 2) {
+    const lastPart = parts[parts.length - 1];
+    const [chapterVerse] = lastPart.split(':');
+    
+    if (chapterVerse.includes(':')) {
+      [chapter, verse] = chapterVerse.split(':');
+      book = parts.slice(0, -1).join(' ');
+    } else {
+      chapter = chapterVerse;
+      verse = '1';
+      book = parts.slice(0, -1).join(' ');
+    }
+  } else {
+    throw new Error('Formato de referencia no reconocido');
+  }
+  
+  if (!books.includes(book)) {
+    throw new Error(`Libro "${book}" no reconocido`);
+  }
+  
+  return [book, chapter, verse];
+}
+
+function getChapters(book) {
+  const chapterCounts = {
+    "Génesis": 50, "Éxodo": 40, "Levítico": 27, "Números": 36, "Deuteronomio": 34,
+    "Mateo": 28, "Marcos": 16, "Lucas": 24, "Juan": 21, "Hechos": 28,
+    "Romanos": 16, "1 Corintios": 16, "2 Corintios": 13, "Gálatas": 6, "Efesios": 6,
+    "Filipenses": 4, "Colosenses": 4, "1 Tesalonicenses": 5, "2 Tesalonicenses": 3,
+    "1 Timoteo": 6, "2 Timoteo": 4, "Tito": 3, "Filemón": 1, "Hebreos": 13,
+    "Santiago": 5, "1 Pedro": 5, "2 Pedro": 3, "1 Juan": 5, "2 Juan": 1, "3 Juan": 1,
+    "Judas": 1, "Apocalipsis": 22
+  };
+  
+  return Array.from({length: chapterCounts[book] || 150}, (_, i) => i + 1);
+}
+
+function getVerses(book, chapter) {
+  return Array.from({length: 176}, (_, i) => i + 1);
+}
+
+function displayResult(book, chapter, verse, verseText) {
+  resultDiv.innerHTML = `
+    <p class="verse">${book} ${chapter}:${verse}</p>
+    <p class="verse-text">${verseText}</p>
+  `;
+}
+
+function displayAnalysis(analysis) {
+  resultDiv.innerHTML += `
+    <div class="analysis">
+      <h3>Análisis:</h3>
+      ${analysis.analysis.split('\n').map(paragraph => `<p>${paragraph}</p>`).join('')}
+    </div>
+    ${analysis.explanations.length > 0 ? `
+    <div class="explanations">
+      <h3>Términos:</h3>
+      ${analysis.explanations.map(exp => `
+        <div class="explanation">
+          <strong>${exp.term}:</strong> ${exp.explanation}
+        </div>
+      `).join('')}
+    </div>
+    ` : ''}
+    <div class="references">
+      <h3>Referencias:</h3>
+      <ul>
+        ${analysis.references.map(ref => `<li><span class="reference-link" onclick="analyzeVerse('${ref}')">${ref}</span></li>`).join('')}
+      </ul>
+    </div>
+    <div class="web-info">
+      <h3>Información Adicional:</h3>
+      ${Array.isArray(analysis.webInfo) 
+        ? analysis.webInfo.map(info => `<p>${info}</p>`).join('')
+        : `<p>${analysis.webInfo}</p>`
+      }
+    </div>
+  `;
+}
+
+// Configuración de particles.js
+particlesJS('particles-js', {
+  particles: {
+    number: { value: 80, density: { enable: true, value_area: 800 } },
+    color: { value: "#ffffff" },
+    shape: { type: "circle", stroke: { width: 0, color: "#000000" }, polygon: { nb_sides: 5 } },
+    opacity: { value: 0.5, random: false, anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false } },
+    size: { value: 3, random: true, anim: { enable: false, speed: 40, size_min: 0.1, sync: false } },
+    line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+    move: { enable: true, speed: 6, direction: "none", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false, rotateX: 600, rotateY: 1200 } }
+  },
+  interactivity: {
+    detect_on: "canvas",
+    events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+    modes: { grab: { distance: 400, line_linked: { opacity: 1 } }, bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 }, remove: { particles_nb: 2 } }
+  },
+  retina_detect: true
+});
+</script>
+</body></html>
